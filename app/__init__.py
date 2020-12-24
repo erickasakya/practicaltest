@@ -4,7 +4,7 @@ from app.application import APP
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-def create_app( with_static=True):
+def create_app(with_static=True):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.sql')
     app = APP(SQLALCHEMY_DATABASE_URI)
     app.init_database()
