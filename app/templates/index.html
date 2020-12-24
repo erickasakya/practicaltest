@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 id="title">TopSoft Inc Emplooyees' Database.</h1>
+  <form action="/scrapp" method="POST">
+    <div class="form-group">
+        <label>Click the button to retrieve the Data from the Datasets.</label><br/>
+      <button type="submit" name="scrapp" class="btn btn-primary">Scrapp</button>
+    </div>
+  </form>
+<div id="result">    
+    <div id="alertresult" role="alert" style="text-align: left;">   
+        <h2 style="text-align: center;">The list of employees' details from the three(3) datasets provided.</h2>
+        <hr style='clear:both;'>       
+        <table class="table table-striped" id="employee_table">
+            <thead>
+                <tr>
+                    <th>Staff ID </th>
+                    <th>Staff Name</th>
+                    <th>Staff Status</th>
+                    <th>Designation</th>
+                    <th>Role</th>
+                    <th>Time Spent Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in sentdata %}
+                    <tr>
+                      <td>{{data[0]}}</td>
+                      <td>{{data[1]}} {{data[2]}} {{data[3]}}</td>
+                      <td>{{data[4]}}</td>
+                      <td>{{data[5]}}</td>
+                      <td>{{data[6]}}</td>
+                      <td>{{data[7]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+    var dTable = {}, displayed_tab = '', jsModel = {}, TableManageButtons;
+    $(document).ready(function() {
+      $('#employee_table').DataTable({
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                    processing: true,
+                    responsive: true});
+      var JsModel = function () {
+            var self = this;
+            self.display_table = function (data, click_event) {
+                TableManageButtons.init($(click_event.target).prop("hash").toString().replace("#", ""));
+            };
+
+      };
+      jsModel = new JsModel();
+      ko.applyBindings(jsModel);
+
+      var handleDataTableButtons = function () {
+        if ($('#employee_tabledd').length ) {
+                dTable['employee_table'] = $('#employee_table').DataTable({
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                    processing: true,
+                    responsive: true,
+                    dom: '<"html5buttons"B>lTfgitp',
+                    // buttons:  getBtnConfig('List of Employee data'),
+                    ajax: {
+                        url: '/employees',
+                        dataType: 'JSON',
+                        type: 'POST',
+                        data: function (d) {
+                            //d.status_id = 1;
+                        }
+                    },
+                    columns: [
+                      {"data": "id" },
+                      {"data": "staff_name" },
+                      {"data": "status" },
+                      {"data": "designation"},
+                      {"data": "role", render: function (data, type, full, meta) {
+                        if (data==1) {
+                          return "Admin";
+                        }else if (data==2) {
+                          return "Editor";
+                        }else{
+                          return "Viewer";
+                        }}
+                      },
+                      {"data": "time_spent", render: function (data, type, full, meta) {
+                        if (data >= 2) {
+                          return "Old";
+                        }else{
+                          return "New";
+                        }}
+                      }
+                    ]
+                });
+        }
+      }
+
+      TableManageButtons = function () { 
+          "use strict";
+          return {
+              init: function () {
+                  handleDataTableButtons();
+              }
+          };
+      }();
+      TableManageButtons.init();
+    });
+</script>
+{% endblock javascript %}

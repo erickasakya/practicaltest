@@ -1,0 +1,9 @@
+.container   { text-align: center; margin-top: 10px; width: 80%;}
+#title       { color: #D2691E;}
+input:focus  { color: rgb(20, 20, 211);}
+label        { color:  #FFD700; font-size: 1.6em;}
+
+/* #qndistrict  { color: #D2691E;}
+input        { margin: 15px 0; padding-left: 10px;}
+#result      { margin-top: 5px;}
+#alertresult { padding-top: 0px;} */
