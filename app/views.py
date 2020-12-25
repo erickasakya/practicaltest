@@ -63,7 +63,7 @@ def staff_role_check(employee_id):
     for data in employee_actions:
         if data['employee_id'] == employee_id and data['blog_action_id'] in [1,3,7,4,5,8,10,13]:
             employee_action_id.append(data['blog_action_id'])
-    roles=[[1,3,7,4,5,8,10,13], [1,4,5,10,13], [4]]
+    roles=[[1,3,7,4,5,8,10,13], [1,4,5,7,10,13], [4]]
     counter=0
     for role in roles:
         if areEqual(role,employee_action_id,len(role),len(employee_action_id)):
