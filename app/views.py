@@ -1,19 +1,19 @@
 # import requests
 from werkzeug.exceptions import NotFound
-from app.utils import render_template, expose, url_for, application
-from app.models import Employee, Desigination
+from app.utils import render_template, expose, url_for, application, render_response
+from app.models import Employee, Desigination, EmployeeSchema, DesiginationSchema
 from sqlalchemy.orm import sessionmaker
 from app.datasets.dataset1 import employee_data, employee_designation
 from app.datasets.dataset3 import get_dataset3
 from datetime import date, datetime
 
+employee_schema = EmployeeSchema(many=True)
 employee_actions=get_dataset3()
 
 @expose('/')
 @expose('/home')
 def homepage(request):
-    employee_details=employee_list(request)
-    return render_template('index.html', sentdata=employee_details)
+    return render_template('index.html', sentdata=[])
 
 @expose('/scrapp')  
 def scrapp(request):
@@ -30,11 +30,18 @@ def scrapp(request):
         session.add(empl_des)
     session.commit()
     session.close()
-    employee_details=employee_list(request)
-    return render_template('index.html', sentdata=employee_details)
+    return render_template('index.html')
 
 
-@expose('/employees')  
+@expose('/employees/list')  
+def employee_list1(request):
+    resp_results=employee_list(request)
+    return render_response({"data": resp_results})
+
+@expose('/employee_details')  
+def employee_data(request):
+    return render_response({"data": "request"})
+
 def employee_list(request):
     session = create_db_session()
     result = session.query(Employee).join(Desigination).all()
@@ -43,7 +50,7 @@ def employee_list(request):
     roles_data=['Admin','Editor','Viewer','-']
     for row in result:
         for inv in row.desigination:
-            employee_details.append([row.id, row.first_name,row.last_name, row.other_names, staff_status[row.status_id-1] , inv.title, roles_data[staff_role_check(row.id)], years_between(row.date_of_joining)])
+            employee_details.append({"id":row.id,"first_name":row.first_name,"last_name":row.last_name,"other_names":row.other_names,"staff_status":staff_status[row.status_id-1] , "designation":inv.title,"role": roles_data[staff_role_check(row.id)], "time_spent": years_between(row.date_of_joining)})
     session.close()
     return employee_details
      

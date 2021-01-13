@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, MetaData
 from werkzeug import Request
 from werkzeug.wsgi import ClosingIterator
 from werkzeug.exceptions import HTTPException, NotFound
-from app.utils import local, local_manager, url_map
+from app.utils import local, local_manager, url_map, render_response
 from app import views, models
 
 class APP(object):
@@ -21,6 +21,11 @@ class APP(object):
         response = self.dispatch_request(environ, request)
         return response(environ, start_response)
     
+    def error_404(self):
+        response = render_response({"Message":"Error 404, Page not found try checking the url"})
+        response.status_code = 404
+        return response
+
     def dispatch_request(self, environ, request):
         
         local.url_adapter = adapter = url_map.bind_to_environ(environ)
@@ -28,6 +33,8 @@ class APP(object):
             endpoint, values = adapter.match()
             handler = getattr(views, endpoint)
             return handler(request, **values)
+        except NotFound:
+            return self.error_404()
         except HTTPException as e:
             return e
 

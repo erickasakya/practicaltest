@@ -1,19 +1,87 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <title>PRACTICAL TEST</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.css"/>
-
+        <title>PRACTICAL TEST</title>
+        <link rel="stylesheet" type="text/css" href="static/css/style.css"/>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.css"/>
+        <link rel="stylesheet" type="text/css" href="static/css/datatables.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/css/jquery.dataTables.min.css"/>
+        <script type="text/javascript" src="static/js/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="static/js/bootstrap.js"></script>
     </head>
     <body>
         <div class="container">
             {% block content %} {% endblock content %}
         </div>
-        <script type="text/javascript" src="static/js/jquery-3.1.1.min.js"></script>
-        <script type="text/javascript" src="static/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="static/js/dataTables.bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/js/datatables.min.js"></script>
+        <script type="text/javascript" src="static/js/dataTables.bootstrap4.min.js"></script>
         <script type="text/javascript" src="static/js/knockout-3.4.2.js"></script>
+        <script>
+            function getBtnConfig(title) {
+                var btn_configs = [
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
+                    title: title,
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o text-green"></i>',
+                    titleAttr: 'Excel',
+
+                    title: title,
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-o text-green"></i>',
+                    titleAttr: 'CSV',
+                    title: title,
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o text-danger"></i>',
+                    titleAttr: 'PDF',
+                    title: title,
+                    exportOptions: {
+                        columns: ':visible'
+
+                    }
+                }, /**/
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: title,
+                    customize: function (win) {
+                        $(win.document.body)
+                                .css('font-size', '10pt');
+
+                        $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                    },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+                ];
+                return btn_configs;
+            }
+        </script>
         {% block javascript %} {% endblock javascript %}
     </body>
 </html>

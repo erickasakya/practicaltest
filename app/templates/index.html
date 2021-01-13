@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1 id="title">TopSoft Inc Emplooyees' Database.</h1>
+  <h1 id="title">TopSoft Inc Emplooyees' Database.</h1>
   <form action="/scrapp" method="POST">
     <div class="form-group">
         <label>Click the button to retrieve the Data from the Datasets.</label><br/>
@@ -9,7 +9,7 @@
   </form>
 <div id="result">    
     <div id="alertresult" role="alert" style="text-align: left;">   
-        <h2 style="text-align: center;">The list of employees' details from the three(3) datasets provided.</h2>
+        <h2 style="text-align: center;">The list of employees' details from the Three(3) datasets provided.</h2>
         <hr style='clear:both;'>       
         <table class="table table-striped" id="employee_table">
             <thead>
@@ -20,81 +20,147 @@
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Time Spent Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for data in sentdata %}
-                    <tr>
-                      <td>{{data[0]}}</td>
-                      <td>{{data[1]}} {{data[2]}} {{data[3]}}</td>
-                      <td>{{data[4]}}</td>
-                      <td>{{data[5]}}</td>
-                      <td>{{data[6]}}</td>
-                      <td>{{data[7]}}</td>
-                    </tr>
-                {% endfor %}
+              
             </tbody>
         </table>
     </div>
-</div>
+</div>  
+
+<!-- Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Employee Details</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped" data-bind="with: $root.employee_details">
+                <!-- <h4>Employee's Data</h4> -->
+                <thead>
+                    <tr>
+                        <th style="width:30%" scope="col">Staff ID:</th>
+                        <td align="left" data-bind="text: id"></td>
+                    </tr>
+                  </thead>
+                <tbody>
+                    <tr>
+                        <th style="width:30%">Name:</th>
+                        <td align="left" data-bind="text: first_name+' '+last_name+''+other_names"></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%" scope="row">Designation:</th>
+                        <td align="left" data-bind="text: designation"></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%" scope="row">Role:</th>
+                        <td align="left" data-bind="text: role"></td>
+                    </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock content %}
+
+
 
 {% block javascript %}
 
 <script type="text/javascript">
     var dTable = {}, displayed_tab = '', jsModel = {}, TableManageButtons;
     $(document).ready(function() {
-      $('#employee_table').DataTable({
-                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-                    processing: true,
-                    responsive: true});
+        
       var JsModel = function () {
             var self = this;
             self.display_table = function (data, click_event) {
                 TableManageButtons.init($(click_event.target).prop("hash").toString().replace("#", ""));
             };
+            self.employee_details = ko.observable();
+            self.similar_employees = ko.observableArray();
+            self.employeerole_actions = ko.observableArray();
 
       };
       jsModel = new JsModel();
       ko.applyBindings(jsModel);
 
+
+      //loan approval handling
+    $('table tbody').on('click', 'tr .view_info', function (e) {
+            e.preventDefault();
+            var row = $(this).closest('tr');
+            var tbl = row.parent().parent();
+            var tbl_id = $(tbl).attr("id");
+            var dt = dTable[tbl_id];
+            var data = dt.row(row).data();
+            if (typeof (data) === 'undefined') {
+                data = dt.row($(row).prev()).data();
+                if (typeof (data) === 'undefined') {
+                    data = dt.row($(row).prev().prev()).data();
+                }
+            }
+            jsModel.employee_details(data);
+            console.log(data);
+            dt.search("").draw();
+            $.ajax({
+            url: '/employee_details',
+            data: data,
+            type: 'POST',
+            dataType:'json',
+            success:function(response){
+                console.log(response);
+                jsModel.approval_data(null);
+                jsModel.approval_data(null);
+
+                jsModel.similar_employees(response.similar_employees);
+                jsModel.employeerole_actions(response.role_actions);
+
+            }
+            });
+        });
+
+
+
       var handleDataTableButtons = function () {
-        if ($('#employee_tabledd').length ) {
+        if ($('#employee_table').length ) {
                 dTable['employee_table'] = $('#employee_table').DataTable({
                     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                     processing: true,
                     responsive: true,
                     dom: '<"html5buttons"B>lTfgitp',
-                    // buttons:  getBtnConfig('List of Employee data'),
+                    buttons:  getBtnConfig('List of Employee data'),
                     ajax: {
-                        url: '/employees',
+                        url: '/employees/list',
                         dataType: 'JSON',
                         type: 'POST',
                         data: function (d) {
-                            //d.status_id = 1;
+                            
                         }
                     },
                     columns: [
                       {"data": "id" },
-                      {"data": "staff_name" },
-                      {"data": "status" },
+                      {"data": "first_name", render: function (data, type, full, meta) {
+                          return data+" "+full.last_name+" "+full.other_names
+                        } },
+                      {"data": "staff_status" },
                       {"data": "designation"},
-                      {"data": "role", render: function (data, type, full, meta) {
-                        if (data==1) {
-                          return "Admin";
-                        }else if (data==2) {
-                          return "Editor";
-                        }else{
-                          return "Viewer";
-                        }}
-                      },
-                      {"data": "time_spent", render: function (data, type, full, meta) {
-                        if (data >= 2) {
-                          return "Old";
-                        }else{
-                          return "New";
-                        }}
-                      }
+                      {"data": "role"},
+                      {"data": "time_spent"},
+                      {"data": "id", render:function ( data, type, full, meta ) {
+                          var ret_txt = "<a data-target='#employeeModal' data-toggle='modal' class='btn btn-sm view_info' data-toggle='tooltip' title='View staff info'>View</a>";
+                          return ret_txt;
+                      }}
                     ]
                 });
         }
