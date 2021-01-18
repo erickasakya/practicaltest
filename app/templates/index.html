@@ -92,10 +92,8 @@
                             <td> Staff Name</td>
                         </tr>
                     </thead>
-                    
-
-                    <tbody>
-                      <tr data-bind="foreach: $root.similar_employees">
+                    <tbody data-bind="foreach: $root.similar_employees">
+                      <tr >
                         <th style="width:30%" data-bind="text: id">:</th>
                         <td align="left" data-bind="text: first_name+' '+last_name+' '+other_names"></td>
                       </tr>
