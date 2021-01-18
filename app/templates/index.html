@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h1 id="title">TopSoft Inc Emplooyees' Database.</h1>
+  <h1 class="title">TopSoft Inc Emplooyees' Database.</h1>
   <form action="/scrapp" method="POST">
     <div class="form-group">
         <label>Click the button to retrieve the Data from the Datasets.</label><br/>
@@ -41,6 +41,7 @@
           </button>
         </div>
         <div class="modal-body">
+          <h5 class="title">Employee Details</h5>
             <table class="table table-striped" data-bind="with: $root.employee_details">
                 <thead>
                     <tr>
@@ -63,21 +64,48 @@
                     </tr>
                 </tbody>
               </table>
-              <h4>Actions for the Employee</h4>
-              <table class="table table-striped" data-bind="with: $root.employee_details">
-                <thead>
-                    <tr>
-                        <th style="width:30%" scope="col">Action ID:</th>
-                        <td> Action</td>
-                    </tr>
-                  </thead>
-                <tbody  data-bind="foreach: $root.employeerole_actions">
-                    <tr>
+              <div class="row">
+                <div class="col-lg-6">
+                  <h5 class="title">Actions for the Employee</h5>
+                  <table class="table table-striped" data-bind="with: $root.employee_details">
+                    <thead>
+                        <tr>
+                            <th style="width:30%" scope="col">Action ID:</th>
+                            <td> Action</td>
+                        </tr>
+                      </thead>
+                    <tbody  data-bind="foreach: $root.employeerole_actions">
+                        <tr>
+                            <th style="width:30%" data-bind="text: id">:</th>
+                            <td align="left" data-bind="text: action"></td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="col-lg-6">
+                  <h5 class="title">Similar Employees</h5>
+                  <table class="table table-striped" data-bind="with: $root.employee_details">
+                    <thead>
+                        <tr>
+                            <th style="width:30%" scope="col">Staff ID:</th>
+                            <td> Staff Name</td>
+                        </tr>
+                    </thead>
+                    
+
+                    <tbody>
+                      <tr data-bind="foreach: $root.similar_employees">
                         <th style="width:30%" data-bind="text: id">:</th>
-                        <td align="left" data-bind="text: action"></td>
-                    </tr>
-                </tbody>
-              </table>
+                        <td align="left" data-bind="text: first_name+' '+last_name+' '+other_names"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+
+              
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

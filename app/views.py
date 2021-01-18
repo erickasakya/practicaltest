@@ -1,3 +1,4 @@
+from sqlalchemy.sql.elements import or_, and_
 from werkzeug.exceptions import NotFound
 from app.utils import render_template, expose, url_for, application, render_response
 from app.models import Employee, Desigination, EmployeeSchema, DesiginationSchema
@@ -8,6 +9,8 @@ from app.datasets.dataset3 import get_dataset3
 from datetime import date, datetime
 
 employee_schema = EmployeeSchema(many=True)
+employee_schema1 = EmployeeSchema()
+
 employee_actions=get_dataset3()
 
 @expose('/')
@@ -50,7 +53,16 @@ def employee_data(request):
     for action_id, action in zip(actions_keys, actions_values):
         actions.append(dict(id= action_id, action= action))
 
-    similar_employees=[]
+    session = create_db_session()
+
+    employee_data=session.query(Employee).filter(Employee.id == int(employee_id)).first()
+    employee_data=employee_schema1.dump(employee_data)
+    
+    result = session.query(Employee).filter(or_(Employee.first_name.like(employee_data['last_name']),Employee.last_name.like(employee_data['last_name']), Employee.other_names.like(employee_data['last_name'])),or_(or_(Employee.first_name.like(employee_data['other_names']),Employee.last_name.like(employee_data['other_names']), Employee.other_names.like(employee_data['other_names'])),or_(Employee.first_name.like(employee_data['first_name']),Employee.last_name.like(employee_data['first_name']), Employee.other_names.like(employee_data['first_name'])))).filter(Employee.id != int(employee_id)).all()
+
+    similar_employees=employee_schema.dump(result)
+    
+    session.close()
     response={
         "role_actions": actions,
         "similar_employees": similar_employees
@@ -82,6 +94,9 @@ def years_between(d1):
 
 def staff_role_check(employee_id):
     employee_action_id=[]
+    if 'success' in employee_actions:
+        return 0
+
     for data in employee_actions:
         if data['employee_id'] == int(employee_id) and data['blog_action_id'] in [1,3,7,4,5,8,10,13]:
             employee_action_id.append(data['blog_action_id'])
