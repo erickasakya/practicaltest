@@ -42,7 +42,6 @@
         </div>
         <div class="modal-body">
             <table class="table table-striped" data-bind="with: $root.employee_details">
-                <!-- <h4>Employee's Data</h4> -->
                 <thead>
                     <tr>
                         <th style="width:30%" scope="col">Staff ID:</th>
@@ -61,6 +60,21 @@
                     <tr>
                         <th style="width:30%" scope="row">Role:</th>
                         <td align="left" data-bind="text: role"></td>
+                    </tr>
+                </tbody>
+              </table>
+              <h4>Actions for the Employee</h4>
+              <table class="table table-striped" data-bind="with: $root.employee_details">
+                <thead>
+                    <tr>
+                        <th style="width:30%" scope="col">Action ID:</th>
+                        <td> Action</td>
+                    </tr>
+                  </thead>
+                <tbody  data-bind="foreach: $root.employeerole_actions">
+                    <tr>
+                        <th style="width:30%" data-bind="text: id">:</th>
+                        <td align="left" data-bind="text: action"></td>
                     </tr>
                 </tbody>
               </table>
@@ -111,17 +125,15 @@
                 }
             }
             jsModel.employee_details(data);
-            console.log(data);
-            dt.search("").draw();
             $.ajax({
             url: '/employee_details',
-            data: data,
-            type: 'POST',
+            data: {employee_id: data.id},
+            type: 'GET',
             dataType:'json',
             success:function(response){
                 console.log(response);
-                jsModel.approval_data(null);
-                jsModel.approval_data(null);
+                jsModel.similar_employees(null);
+                jsModel.employeerole_actions(null);
 
                 jsModel.similar_employees(response.similar_employees);
                 jsModel.employeerole_actions(response.role_actions);

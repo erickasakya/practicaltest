@@ -1,9 +1,9 @@
-# import requests
 from werkzeug.exceptions import NotFound
 from app.utils import render_template, expose, url_for, application, render_response
 from app.models import Employee, Desigination, EmployeeSchema, DesiginationSchema
 from sqlalchemy.orm import sessionmaker
-from app.datasets.dataset1 import employee_data, employee_designation
+from app.datasets.dataset1 import employee_data as employee_details, employee_designation
+from app.datasets.dataset2 import actions_data
 from app.datasets.dataset3 import get_dataset3
 from datetime import date, datetime
 
@@ -21,7 +21,7 @@ def scrapp(request):
     session.query(Employee).delete()
     session.query(Desigination).delete()
     session.commit()
-    for data in employee_data:
+    for data in employee_details:
         empl = Employee(first_name=data['first_name'], last_name=data['last_name'], other_names=data['other_names'], date_of_joining=data['date_of_joining'], status_id=data['status_id'])
         session.add(empl)
 
@@ -35,14 +35,29 @@ def scrapp(request):
 
 @expose('/employees/list')  
 def employee_list1(request):
-    resp_results=employee_list(request)
+    resp_results=employee_list()
     return render_response({"data": resp_results})
 
 @expose('/employee_details')  
 def employee_data(request):
-    return render_response({"data": "request"})
+    employee_id=request.args.get('employee_id')
+    role_actions=actions_data[staff_role_check(employee_id)]
 
-def employee_list(request):
+    actions_keys = role_actions.keys()
+    actions_values = role_actions.values()
+
+    actions=[]
+    for action_id, action in zip(actions_keys, actions_values):
+        actions.append(dict(id= action_id, action= action))
+
+    similar_employees=[]
+    response={
+        "role_actions": actions,
+        "similar_employees": similar_employees
+    }
+    return render_response(response)
+
+def employee_list():
     session = create_db_session()
     result = session.query(Employee).join(Desigination).all()
     employee_details=[] 
@@ -68,7 +83,7 @@ def years_between(d1):
 def staff_role_check(employee_id):
     employee_action_id=[]
     for data in employee_actions:
-        if data['employee_id'] == employee_id and data['blog_action_id'] in [1,3,7,4,5,8,10,13]:
+        if data['employee_id'] == int(employee_id) and data['blog_action_id'] in [1,3,7,4,5,8,10,13]:
             employee_action_id.append(data['blog_action_id'])
     roles=[[1,3,7,4,5,8,10,13], [1,4,5,7,10,13], [4]]
     counter=0
