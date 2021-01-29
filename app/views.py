@@ -60,6 +60,9 @@ def employee_data(request):
     
     result = session.query(Employee).filter(or_(Employee.first_name.like(employee_data['last_name']),Employee.last_name.like(employee_data['last_name']), Employee.other_names.like(employee_data['last_name'])),or_(or_(Employee.first_name.like(employee_data['other_names']),Employee.last_name.like(employee_data['other_names']), Employee.other_names.like(employee_data['other_names'])),or_(Employee.first_name.like(employee_data['first_name']),Employee.last_name.like(employee_data['first_name']), Employee.other_names.like(employee_data['first_name'])))).filter(Employee.id != int(employee_id)).all()
 
+    # print(str(result))
+    # result=result.all()
+
     similar_employees=employee_schema.dump(result)
     
     session.close()
