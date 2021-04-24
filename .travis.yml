@@ -1,9 +1,9 @@
+# .travis.yml
+dist: xenial
 language: python
+cache: pip
 python: 
   - "3.6" 
-  - "3.7"
-  - "3.8"
-  - "3.9"
 virtualenv:
   system_site_packages: true
 before_install:
