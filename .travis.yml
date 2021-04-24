@@ -4,11 +4,9 @@ language: python
 cache: pip
 python: 
   - "3.6" 
-# virtualenv:
-#   system_site_packages: true
 before_install:
   - python -m pip install --upgrade pip
 install:
-  -pip install -r requirements.txt #--use-feature=2020-resolver
+  -pip install -r requirements.txt 
 script:
   -pytest
