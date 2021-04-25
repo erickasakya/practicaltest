@@ -5,3 +5,6 @@ env/
 */__pycache__/.*
 *.pyc
 *.sql
+*.coverage
+*.pytest_cache
+__pycache__
