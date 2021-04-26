@@ -19,6 +19,7 @@ install:
 - pip install -r requirements.txt
 script: pytest
 deploy:
+skip_cleanup: true
   provider: script
   script: bash .travis/deploy.sh production
   on:
