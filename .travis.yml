@@ -5,12 +5,14 @@ python:
 - '3.6'
 before_install:
 - openssl aes-256-cbc -K $encrypted_b9974129fa9b_key -iv $encrypted_b9974129fa9b_iv
-  -in trtravis_key.enc -out trtravis_key -d
+  -in trtravis_key.enc -out .travis/trtravis_key -d
 - python -m pip install --upgrade pip
 - pip3 install --upgrade pytest
 - pip3 install codecov
 install:
 - pip install -r requirements.txt
+before_script:
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 script: pytest
 deploy:
   provider: script

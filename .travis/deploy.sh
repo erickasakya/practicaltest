@@ -16,8 +16,8 @@ elif [ "$1" = "staging" ] ; then
 elif [ "$BRANCH" = "production" ]; then
   # deploy to production
 eval "$(ssh-agent -s)" # Start ssh-agent cache
-# chmod 600 .travis/id_rsa # Allow read access to the private key
-# ssh-add .travis/id_rsa # Add the private key to SSH
+chmod 600 .travis/trtravis_key # Allow read access to the private key
+ssh-add .travis/trtravis_key # Add the private key to SSH
 
 git config --global push.default matching
 git remote add deploy ssh://travis@$IP:$PORT$DEPLOY_DIR
