@@ -5,6 +5,7 @@ python:
 - '3.6'
 addons:
   ssh_known_hosts:
+  - git.example.com
   - $IP
 before_script:
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
