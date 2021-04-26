@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# scripts/deploy.sh
-# Deploy code from travis
-
 APP="$0"
 BRANCH="$1"
 
