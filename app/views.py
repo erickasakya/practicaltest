@@ -14,7 +14,7 @@ employee_schema1 = EmployeeSchema()
 employee_actions=get_dataset3()
 
 @expose('/')
-@expose('/home')
+@expose('/practicaltest')
 def homepage(request):
     return render_template('index.html', sentdata=[])
 
