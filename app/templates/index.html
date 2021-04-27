@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
   <h1 class="title">TopSoft Inc Emplooyees' Database.</h1>
-  <form action="/scrapp" method="POST">
+  <form action="/practicaltest/scrapp" method="POST">
     <div class="form-group">
         <label>Click the button to retrieve the Data from the Datasets.</label><br/>
       <button type="submit" name="scrapp" class="btn btn-primary">Scrapp</button>
@@ -151,7 +151,7 @@
             }
             jsModel.employee_details(data);
             $.ajax({
-            url: '/employee_details',
+            url: '/practicaltest/employee_details',
             data: {employee_id: data.id},
             type: 'GET',
             dataType:'json',
@@ -178,7 +178,7 @@
                     dom: '<"html5buttons"B>lTfgitp',
                     buttons:  getBtnConfig('List of Employee data'),
                     ajax: {
-                        url: '/employees/list',
+                        url: '/practicaltest/employees/list',
                         dataType: 'JSON',
                         type: 'POST',
                         data: function (d) {

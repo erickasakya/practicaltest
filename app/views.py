@@ -18,7 +18,7 @@ employee_actions=get_dataset3()
 def homepage(request):
     return render_template('index.html', sentdata=[])
 
-@expose('/scrapp')  
+@expose('/practicaltest/scrapp')  
 def scrapp(request):
     session = create_db_session()
     session.query(Employee).delete()
@@ -36,12 +36,12 @@ def scrapp(request):
     return render_template('index.html')
 
 
-@expose('/employees/list')  
+@expose('/practicaltest/employees/list')  
 def employee_list1(request):
     resp_results=employee_list()
     return render_response({"data": resp_results})
 
-@expose('/employee_details')  
+@expose('/practicaltest/employee_details')  
 def employee_data(request):
     employee_id=request.args.get('employee_id')
     role_actions=actions_data[staff_role_check(employee_id)]
