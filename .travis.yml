@@ -7,8 +7,6 @@ addons:
   ssh_known_hosts:
   - git.example.com
   - $IP
-before_script:
-  - echo -e "Host $IP\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 before_install:
 - openssl aes-256-cbc -K $encrypted_b9974129fa9b_key -iv $encrypted_b9974129fa9b_iv
   -in trtravis_key.enc -out .travis/trtravis_key -d
@@ -18,6 +16,8 @@ before_install:
 install:
 - pip install -r requirements.txt
 script: pytest
+before_script:
+  - echo -e "Host $IP\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 deploy:
   skip_cleanup: true
   provider: script
