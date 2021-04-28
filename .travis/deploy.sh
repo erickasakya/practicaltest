@@ -21,7 +21,6 @@ git config --global push.default matching
 git remote add deploy ssh://travis@$IP:$PORT$DEPLOY_DIR
 git push deploy master
 
-# Skip this command if you don't need to execute any additional commands after deploying.
 ssh travis@$IP -p $PORT <<EOF
     cd $DEPLOY_DIR
     source /home/travis/virtualenv/practicaltestenv/bin/activate
