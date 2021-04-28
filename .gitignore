@@ -8,3 +8,4 @@ env/
 *.coverage
 *.pytest_cache
 __pycache__
+.travis/trtravis_key
