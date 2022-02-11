@@ -1,0 +1,19 @@
+#Use an Ubuntu 18.04 base for our staging server
+FROM vm/ubuntu:18.04
+
+# To note: Layerfiles create entire VMs, *not* containers!
+
+# Install python
+RUN apt-get update && apt-get install python3 python3-pip
+
+# This line copies the repository to /root in the runner
+COPY . .
+RUN pip3 install -r requirements.txt
+
+RUN python run.py
+
+# Expose the webserver in the staging server as a secure link.
+# Whenever someone clicks the link, we'll load this staging server and forward
+# their requests to it.
+RUN BACKGROUND python3 -m http.server 80
+EXPOSE WEBSITE http://localhost:80
